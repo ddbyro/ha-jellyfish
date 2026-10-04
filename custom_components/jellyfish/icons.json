@@ -1,0 +1,103 @@
+{
+  "entity": {
+    "select": {
+      "pattern": {
+        "default": "mdi:palette"
+      },
+      "direction": {
+        "default": "mdi:arrow-left-right"
+      },
+      "effect": {
+        "default": "mdi:creation"
+      },
+      "pattern_type": {
+        "default": "mdi:shape"
+      },
+      "effect_between_pixels": {
+        "default": "mdi:gradient-horizontal"
+      }
+    },
+    "number": {
+      "speed": {
+        "default": "mdi:speedometer"
+      },
+      "brightness": {
+        "default": "mdi:brightness-6"
+      },
+      "effect_value": {
+        "default": "mdi:tune"
+      }
+    },
+    "sensor": {
+      "restarts_detected": {
+        "default": "mdi:restart-alert"
+      },
+      "connection_drops": {
+        "default": "mdi:lan-disconnect"
+      },
+      "active_pattern": {
+        "default": "mdi:palette"
+      },
+      "ports": {
+        "default": "mdi:ethernet"
+      },
+      "pixels": {
+        "default": "mdi:led-strip"
+      },
+      "daily_schedule": {
+        "default": "mdi:calendar-clock"
+      },
+      "calendar_schedule": {
+        "default": "mdi:calendar-month"
+      },
+      "activated_by": {
+        "default": "mdi:gesture-tap"
+      },
+      "pattern_count": {
+        "default": "mdi:folder-multiple"
+      }
+    },
+    "button": {
+      "reconnect": {
+        "default": "mdi:lan-connect"
+      }
+    },
+    "text": {
+      "controller_name": {
+        "default": "mdi:rename"
+      }
+    }
+  },
+  "services": {
+    "run_custom_pattern": {
+      "service": "mdi:palette"
+    },
+    "adjust_pattern": {
+      "service": "mdi:tune"
+    },
+    "save_pattern": {
+      "service": "mdi:content-save"
+    },
+    "delete_pattern": {
+      "service": "mdi:delete"
+    },
+    "get_pattern": {
+      "service": "mdi:file-find"
+    },
+    "get_schedule": {
+      "service": "mdi:calendar-search"
+    },
+    "set_schedule": {
+      "service": "mdi:calendar-edit"
+    },
+    "get_zone_config": {
+      "service": "mdi:ethernet"
+    },
+    "set_zone_config": {
+      "service": "mdi:ethernet-cable"
+    },
+    "refresh": {
+      "service": "mdi:refresh"
+    }
+  }
+}

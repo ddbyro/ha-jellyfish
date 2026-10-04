@@ -1,0 +1,425 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "JellyFish controller",
+        "description": "Enter the controller's IP address or hostname (e.g. JellyFish-2AB3.local). A static DHCP lease is recommended.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      },
+      "discovery_confirm": {
+        "description": "Set up JellyFish controller {name} at {host}?"
+      },
+      "reconfigure": {
+        "title": "Update controller address",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the controller's websocket on that host/port."
+    },
+    "abort": {
+      "already_configured": "This controller is already configured.",
+      "cannot_connect": "Could not reach the controller.",
+      "reconfigure_successful": "Controller address updated.",
+      "wrong_controller": "That address belongs to a different JellyFish controller."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "JellyFish options",
+        "data": {
+          "poll_interval": "Full refresh interval (seconds)"
+        },
+        "data_description": {
+          "poll_interval": "Changes are pushed instantly; this is a safety-net full re-read."
+        }
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "all_zones": {
+        "name": "All zones"
+      }
+    },
+    "select": {
+      "pattern": {
+        "name": "Pattern"
+      },
+      "direction": {
+        "name": "Direction"
+      },
+      "effect": {
+        "name": "Effect"
+      },
+      "pattern_type": {
+        "name": "Pattern type"
+      },
+      "effect_between_pixels": {
+        "name": "Effect between pixels"
+      }
+    },
+    "number": {
+      "speed": {
+        "name": "Speed"
+      },
+      "brightness": {
+        "name": "Pattern brightness"
+      },
+      "effect_value": {
+        "name": "Effect value"
+      },
+      "space_between_pixels": {
+        "name": "Space between pixels"
+      },
+      "skip": {
+        "name": "Skip"
+      },
+      "num_of_leds": {
+        "name": "LEDs per block"
+      }
+    },
+    "sensor": {
+      "firmware": {
+        "name": "Firmware"
+      },
+      "restarts_detected": {
+        "name": "Restarts detected"
+      },
+      "last_restart": {
+        "name": "Last restart"
+      },
+      "connection_drops": {
+        "name": "Connection drops"
+      },
+      "last_connected": {
+        "name": "Last connected"
+      },
+      "last_message": {
+        "name": "Last message"
+      },
+      "latency": {
+        "name": "Latency"
+      },
+      "location": {
+        "name": "Location"
+      },
+      "daily_schedule": {
+        "name": "Daily schedule events"
+      },
+      "calendar_schedule": {
+        "name": "Calendar schedule events"
+      },
+      "pattern_count": {
+        "name": "Saved patterns"
+      },
+      "active_pattern": {
+        "name": "Active pattern"
+      },
+      "activated_by": {
+        "name": "Activated by"
+      },
+      "ports": {
+        "name": "Ports"
+      },
+      "pixels": {
+        "name": "Pixels"
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Connected"
+      },
+      "firmware_update": {
+        "name": "Firmware update"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh"
+      },
+      "reconnect": {
+        "name": "Reconnect"
+      }
+    },
+    "text": {
+      "controller_name": {
+        "name": "Controller name"
+      }
+    }
+  },
+  "services": {
+    "run_custom_pattern": {
+      "name": "Run custom pattern",
+      "description": "Run an ad-hoc pattern on the targeted zone lights. Unset fields use defaults.",
+      "fields": {
+        "type": {
+          "name": "Pattern type",
+          "description": "How colors move: Color (solid), Chase, Paint, Stacker, Sequence, Multi-Paint, Soffit."
+        },
+        "colors": {
+          "name": "Colors",
+          "description": "List of RGB colors, e.g. [[255,0,0],[0,0,255]]. Up to 30."
+        },
+        "brightness": {
+          "name": "Brightness",
+          "description": "0-100%, as in the JellyFish app."
+        },
+        "speed": {
+          "name": "Speed",
+          "description": "0-100. Lower is faster (0/1 fastest)."
+        },
+        "direction": {
+          "name": "Direction",
+          "description": "Which way the pattern moves."
+        },
+        "effect": {
+          "name": "Effect",
+          "description": "Overlay effect: Twinkle or Lightning."
+        },
+        "effect_value": {
+          "name": "Effect value",
+          "description": "Strength of the overlay effect."
+        },
+        "space_between_pixels": {
+          "name": "Space between pixels",
+          "description": "Length of each color segment."
+        },
+        "effect_between_pixels": {
+          "name": "Effect between pixels",
+          "description": "How adjacent colors blend."
+        },
+        "num_of_leds": {
+          "name": "Number of LEDs",
+          "description": "LEDs per color block (Multi-Paint)."
+        },
+        "skip": {
+          "name": "Skip",
+          "description": "Step size per frame; depends on the pattern type."
+        },
+        "save_as": {
+          "name": "Save as",
+          "description": "Optionally also save it as Folder/Name."
+        }
+      }
+    },
+    "adjust_pattern": {
+      "name": "Adjust pattern",
+      "description": "Change fields of the pattern currently running on the targeted lights.",
+      "fields": {
+        "type": {
+          "name": "Pattern type",
+          "description": "How colors move: Color (solid), Chase, Paint, Stacker, Sequence, Multi-Paint, Soffit."
+        },
+        "colors": {
+          "name": "Colors",
+          "description": "List of RGB colors, e.g. [[255,0,0],[0,0,255]]. Up to 30."
+        },
+        "brightness": {
+          "name": "Brightness",
+          "description": "0-100%, as in the JellyFish app."
+        },
+        "speed": {
+          "name": "Speed",
+          "description": "0-100. Lower is faster (0/1 fastest)."
+        },
+        "direction": {
+          "name": "Direction",
+          "description": "Which way the pattern moves."
+        },
+        "effect": {
+          "name": "Effect",
+          "description": "Overlay effect: Twinkle or Lightning."
+        },
+        "effect_value": {
+          "name": "Effect value",
+          "description": "Strength of the overlay effect."
+        },
+        "space_between_pixels": {
+          "name": "Space between pixels",
+          "description": "Length of each color segment."
+        },
+        "effect_between_pixels": {
+          "name": "Effect between pixels",
+          "description": "How adjacent colors blend."
+        },
+        "num_of_leds": {
+          "name": "Number of LEDs",
+          "description": "LEDs per color block (Multi-Paint)."
+        },
+        "skip": {
+          "name": "Skip",
+          "description": "Step size per frame; depends on the pattern type."
+        }
+      }
+    },
+    "save_pattern": {
+      "name": "Save pattern",
+      "description": "Save a pattern to the controller (shows up in the app).",
+      "fields": {
+        "type": {
+          "name": "Pattern type",
+          "description": "How colors move: Color (solid), Chase, Paint, Stacker, Sequence, Multi-Paint, Soffit."
+        },
+        "colors": {
+          "name": "Colors",
+          "description": "List of RGB colors, e.g. [[255,0,0],[0,0,255]]. Up to 30."
+        },
+        "brightness": {
+          "name": "Brightness",
+          "description": "0-100%, as in the JellyFish app."
+        },
+        "speed": {
+          "name": "Speed",
+          "description": "0-100. Lower is faster (0/1 fastest)."
+        },
+        "direction": {
+          "name": "Direction",
+          "description": "Which way the pattern moves."
+        },
+        "effect": {
+          "name": "Effect",
+          "description": "Overlay effect: Twinkle or Lightning."
+        },
+        "effect_value": {
+          "name": "Effect value",
+          "description": "Strength of the overlay effect."
+        },
+        "space_between_pixels": {
+          "name": "Space between pixels",
+          "description": "Length of each color segment."
+        },
+        "effect_between_pixels": {
+          "name": "Effect between pixels",
+          "description": "How adjacent colors blend."
+        },
+        "num_of_leds": {
+          "name": "Number of LEDs",
+          "description": "LEDs per color block (Multi-Paint)."
+        },
+        "skip": {
+          "name": "Skip",
+          "description": "Step size per frame; depends on the pattern type."
+        },
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "pattern": {
+          "name": "Pattern",
+          "description": "Folder/Name, e.g. 'My Patterns/Team Colors'."
+        },
+        "from_zone": {
+          "name": "From zone",
+          "description": "Start from the pattern running on this zone."
+        }
+      }
+    },
+    "delete_pattern": {
+      "name": "Delete pattern",
+      "description": "Delete a user pattern (built-ins are protected).",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "pattern": {
+          "name": "Pattern",
+          "description": "Folder/Name, e.g. 'My Patterns/Team Colors'."
+        }
+      }
+    },
+    "get_pattern": {
+      "name": "Get pattern",
+      "description": "Return a saved pattern's settings.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "pattern": {
+          "name": "Pattern",
+          "description": "Folder/Name, e.g. 'My Patterns/Team Colors'."
+        }
+      }
+    },
+    "get_schedule": {
+      "name": "Get schedule",
+      "description": "Return the controller's daily and/or calendar schedule.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "daily, calendar, or all."
+        }
+      }
+    },
+    "set_schedule": {
+      "name": "Set schedule",
+      "description": "Replace the daily or calendar schedule. Use get_schedule to see the format.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "kind": {
+          "name": "Kind",
+          "description": "daily or calendar."
+        },
+        "events": {
+          "name": "Events",
+          "description": "Full list of schedule events (replaces existing)."
+        }
+      }
+    },
+    "get_zone_config": {
+      "name": "Get zone config",
+      "description": "Return zones and their port mappings.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        }
+      }
+    },
+    "set_zone_config": {
+      "name": "Set zone config",
+      "description": "Replace zone/port mapping. Turns lights off. Ports match the board's LED1-LED4 labels.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "zones": {
+          "name": "Zones",
+          "description": "{zone: {portMap: [{phyPort, phyStartIdx, phyEndIdx}]}} (indexes start at 0)."
+        },
+        "confirm": {
+          "name": "Confirm",
+          "description": "Must be true."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Re-read everything from the controller.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        }
+      }
+    }
+  }
+}

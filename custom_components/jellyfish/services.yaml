@@ -1,0 +1,326 @@
+run_custom_pattern:
+  target:
+    entity:
+      integration: jellyfish
+      domain: light
+  fields:
+    type:
+      selector:
+        select:
+          options:
+          - Color
+          - Chase
+          - Paint
+          - Stacker
+          - Sequence
+          - Multi-Paint
+          - Soffit
+    colors:
+      example: '[[255, 0, 0], [0, 255, 0]]'
+      selector:
+        object: null
+    brightness:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: '%'
+    speed:
+      selector:
+        number:
+          min: 0
+          max: 100
+    direction:
+      selector:
+        select:
+          options:
+          - Left
+          - Center
+          - Right
+    effect:
+      selector:
+        select:
+          options:
+          - No Effect
+          - Twinkle
+          - Lightning
+    effect_value:
+      selector:
+        number:
+          min: 0
+          max: 100
+    space_between_pixels:
+      selector:
+        number:
+          min: 1
+          max: 100
+    effect_between_pixels:
+      selector:
+        select:
+          options:
+          - No Color Transform
+          - Repeat
+          - Progression
+          - Fade
+          - Fill with Black
+    num_of_leds:
+      selector:
+        number:
+          min: 1
+          max: 100
+    skip:
+      selector:
+        number:
+          min: 1
+          max: 100
+    save_as:
+      example: My Patterns/Team Colors
+      selector:
+        text: null
+adjust_pattern:
+  target:
+    entity:
+      integration: jellyfish
+      domain: light
+  fields:
+    type:
+      selector:
+        select:
+          options:
+          - Color
+          - Chase
+          - Paint
+          - Stacker
+          - Sequence
+          - Multi-Paint
+          - Soffit
+    colors:
+      example: '[[255, 0, 0], [0, 255, 0]]'
+      selector:
+        object: null
+    brightness:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: '%'
+    speed:
+      selector:
+        number:
+          min: 0
+          max: 100
+    direction:
+      selector:
+        select:
+          options:
+          - Left
+          - Center
+          - Right
+    effect:
+      selector:
+        select:
+          options:
+          - No Effect
+          - Twinkle
+          - Lightning
+    effect_value:
+      selector:
+        number:
+          min: 0
+          max: 100
+    space_between_pixels:
+      selector:
+        number:
+          min: 1
+          max: 100
+    effect_between_pixels:
+      selector:
+        select:
+          options:
+          - No Color Transform
+          - Repeat
+          - Progression
+          - Fade
+          - Fill with Black
+    num_of_leds:
+      selector:
+        number:
+          min: 1
+          max: 100
+    skip:
+      selector:
+        number:
+          min: 1
+          max: 100
+save_pattern:
+  fields:
+    type:
+      selector:
+        select:
+          options:
+          - Color
+          - Chase
+          - Paint
+          - Stacker
+          - Sequence
+          - Multi-Paint
+          - Soffit
+    colors:
+      example: '[[255, 0, 0], [0, 255, 0]]'
+      selector:
+        object: null
+    brightness:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: '%'
+    speed:
+      selector:
+        number:
+          min: 0
+          max: 100
+    direction:
+      selector:
+        select:
+          options:
+          - Left
+          - Center
+          - Right
+    effect:
+      selector:
+        select:
+          options:
+          - No Effect
+          - Twinkle
+          - Lightning
+    effect_value:
+      selector:
+        number:
+          min: 0
+          max: 100
+    space_between_pixels:
+      selector:
+        number:
+          min: 1
+          max: 100
+    effect_between_pixels:
+      selector:
+        select:
+          options:
+          - No Color Transform
+          - Repeat
+          - Progression
+          - Fade
+          - Fill with Black
+    num_of_leds:
+      selector:
+        number:
+          min: 1
+          max: 100
+    skip:
+      selector:
+        number:
+          min: 1
+          max: 100
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    pattern:
+      required: true
+      example: My Patterns/Team Colors
+      selector:
+        text: null
+    from_zone:
+      example: Zone
+      selector:
+        text: null
+delete_pattern:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    pattern:
+      required: true
+      example: My Patterns/Team Colors
+      selector:
+        text: null
+get_pattern:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    pattern:
+      required: true
+      example: Halloween/Spookier01
+      selector:
+        text: null
+get_schedule:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    kind:
+      default: all
+      selector:
+        select:
+          options:
+          - all
+          - daily
+          - calendar
+set_schedule:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    kind:
+      required: true
+      selector:
+        select:
+          options:
+          - daily
+          - calendar
+    events:
+      required: true
+      selector:
+        object: null
+get_zone_config:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+set_zone_config:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    zones:
+      required: true
+      selector:
+        object: null
+    confirm:
+      required: true
+      default: false
+      selector:
+        boolean: null
+refresh:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish

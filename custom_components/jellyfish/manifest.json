@@ -1,0 +1,15 @@
+{
+  "domain": "jellyfish",
+  "name": "JellyFish Lighting (Local)",
+  "codeowners": ["@ddbyro"],
+  "config_flow": true,
+  "dependencies": [],
+  "dhcp": [{ "hostname": "jellyfish-*" }],
+  "documentation": "https://github.com/ddbyro/ha-jellyfish",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/ddbyro/ha-jellyfish/issues",
+  "loggers": ["custom_components.jellyfish"],
+  "requirements": [],
+  "version": "0.1.0"
+}
