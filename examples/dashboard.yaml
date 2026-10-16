@@ -1,0 +1,192 @@
+# Example JellyFish dashboard (sections view).
+#
+# Paste into: Settings > Dashboards > Add dashboard > (open it) > pencil >
+# three dots > Raw configuration editor.
+#
+# Entity IDs assume a controller named "Home" with one zone named "Zone".
+# Yours follow "<device name>_<entity name>", so search-and-replace
+# "zone_" / "home_" if your names differ.
+#
+# Built-in cards only, except the optional "glow" card at the bottom, which
+# needs card-mod (HACS > Frontend > card-mod).
+
+title: JellyFish
+views:
+  - title: Lights
+    path: jellyfish
+    icon: mdi:string-lights
+    type: sections
+    max_columns: 3
+    badges:
+      - type: entity
+        entity: binary_sensor.home_connected
+        show_name: false
+        color: green
+      - type: entity
+        entity: sensor.zone_active_pattern
+        icon: mdi:palette
+      - type: entity
+        entity: sensor.zone_activated_by
+        icon: mdi:account-arrow-right
+    sections:
+      # --- Main control ---------------------------------------------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Zone
+            icon: mdi:string-lights
+            badges:
+              - type: entity
+                entity: sensor.zone_pixels
+                show_state: true
+          # Tile icon and slider take on the light's current RGB colour.
+          - type: tile
+            entity: light.zone
+            name: House lights
+            icon: mdi:string-lights
+            state_content:
+              - state
+              - effect
+            vertical: false
+            features_position: bottom
+            features:
+              - type: light-brightness
+          - type: tile
+            entity: select.zone_pattern
+            name: Pattern
+            icon: mdi:palette-swatch-variant
+            features:
+              - type: select-options
+          - type: tile
+            entity: number.zone_speed
+            name: Speed
+            icon: mdi:speedometer
+            features:
+              - type: numeric-input
+                style: slider
+          - type: tile
+            entity: select.zone_effect
+            name: Effect
+            icon: mdi:auto-fix
+            grid_options:
+              columns: 6
+            features:
+              - type: select-options
+          - type: tile
+            entity: select.zone_direction
+            name: Direction
+            icon: mdi:arrow-left-right
+            grid_options:
+              columns: 6
+            features:
+              - type: select-options
+
+      # --- Quick scenes ---------------------------------------------------
+      # Each button runs a saved pattern. Replace the option strings with
+      # names from your Pattern select (they look like "Folder/Name").
+      - type: grid
+        cards:
+          - type: heading
+            heading: Quick patterns
+            icon: mdi:star-four-points
+          - type: button
+            name: Warm white
+            icon: mdi:lightbulb-on
+            icon_height: 48px
+            grid_options:
+              columns: 4
+            tap_action:
+              action: perform-action
+              perform_action: select.select_option
+              target:
+                entity_id: select.zone_pattern
+              data:
+                option: "Christmas/Warm White"
+          - type: button
+            name: Party
+            icon: mdi:party-popper
+            icon_height: 48px
+            grid_options:
+              columns: 4
+            tap_action:
+              action: perform-action
+              perform_action: select.select_option
+              target:
+                entity_id: select.zone_pattern
+              data:
+                option: "Party/Rainbow"
+          - type: button
+            name: Off
+            icon: mdi:power
+            icon_height: 48px
+            grid_options:
+              columns: 4
+            tap_action:
+              action: perform-action
+              perform_action: light.turn_off
+              target:
+                entity_id: light.home_all_zones
+
+      # --- Controller health ----------------------------------------------
+      - type: grid
+        cards:
+          - type: heading
+            heading: Controller
+            icon: mdi:router-wireless
+          - type: tile
+            entity: binary_sensor.home_connected
+            name: Connected
+            color: green
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.home_latency
+            name: Latency
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.home_restarts_detected
+            name: Restarts
+            color: red
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: button.home_refresh
+            name: Refresh
+            grid_options:
+              columns: 6
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: binary_sensor.home_connected
+              - entity: light.zone
+
+      # --- Optional: glow card (requires card-mod) --------------------------
+      # A tile whose border and shadow glow in the light's current colour
+      # and pulse while the lights are on. Delete this section if you
+      # don't have card-mod.
+      - type: grid
+        cards:
+          - type: tile
+            entity: light.zone
+            name: Glow
+            icon: mdi:string-lights
+            features:
+              - type: light-brightness
+            card_mod:
+              style: |
+                {% set on = is_state('light.zone', 'on') %}
+                {% set c = state_attr('light.zone', 'rgb_color') or [255, 160, 60] %}
+                {% set rgb = c | join(',') %}
+                ha-card {
+                  border: 1px solid rgba({{ rgb }}, {{ 0.9 if on else 0.15 }});
+                  {% if on %}
+                  background: linear-gradient(135deg,
+                    rgba({{ rgb }}, 0.25), rgba({{ rgb }}, 0.05));
+                  animation: jf-glow 3s ease-in-out infinite;
+                  {% endif %}
+                }
+                @keyframes jf-glow {
+                  0%, 100% { box-shadow: 0 0 8px 1px rgba({{ rgb }}, 0.45); }
+                  50%      { box-shadow: 0 0 22px 6px rgba({{ rgb }}, 0.85); }
+                }
