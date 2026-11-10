@@ -13,7 +13,8 @@ cloud and no external Python dependencies. Unofficial; not endorsed by JellyFish
 - Text: controller name (as shown in the app)
 
 **Diagnostics & health**
-- Connected (binary sensor), firmware version, firmware update flag
+- Connected (binary sensor), firmware version, update entity (the controller only
+  reports whether an update exists, not its version — see the entity's release notes)
 - Restarts detected and last restart: the controller reboots back to an "off" placeholder
   state, and the integration recognizes that after a reconnect
 - Connection drops, last connected, websocket latency, last message

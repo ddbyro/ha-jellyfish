@@ -50,6 +50,24 @@ async def test_setup_creates_entities(hass: HomeAssistant, entry: MockConfigEntr
     assert hass.states.get("binary_sensor.home_connected").state == "on"
     assert hass.states.get("sensor.home_daily_schedule_events").state == "1"
     assert hass.states.get("text.home_controller_name").state == "Home"
+    update = hass.states.get("update.home_firmware_update")
+    assert update.state == "off"
+    assert update.attributes["installed_version"] == "4.6.1"
+    assert update.attributes["latest_version"] == "4.6.1"
+
+
+async def test_firmware_update_available(
+    hass: HomeAssistant, entry: MockConfigEntry, fake: FakeController
+) -> None:
+    fake.state["version"]["isUpdate"] = True
+    await entry.runtime_data.async_request_refresh()
+    await _settle(hass)
+
+    update = hass.states.get("update.home_firmware_update")
+    assert update.state == "on"
+    assert update.attributes["installed_version"] == "4.6.1"
+    assert update.attributes["latest_version"] != "4.6.1"
+    assert "app" in update.attributes["release_summary"]
 
 
 async def test_turn_off_and_push(hass: HomeAssistant, entry, fake: FakeController) -> None:

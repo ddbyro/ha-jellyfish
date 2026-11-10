@@ -1,4 +1,4 @@
-"""Binary sensors: connectivity and firmware update flag."""
+"""Binary sensor: connectivity."""
 
 from __future__ import annotations
 
@@ -21,9 +21,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     coordinator = entry.runtime_data
-    async_add_entities(
-        [JellyFishConnectedSensor(coordinator), JellyFishUpdateSensor(coordinator)]
-    )
+    async_add_entities([JellyFishConnectedSensor(coordinator)])
 
 
 class JellyFishConnectedSensor(JellyFishEntity, BinarySensorEntity):
@@ -41,16 +39,3 @@ class JellyFishConnectedSensor(JellyFishEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         return self.coordinator.connected
-
-
-class JellyFishUpdateSensor(JellyFishEntity, BinarySensorEntity):
-    _attr_translation_key = "firmware_update"
-    _attr_device_class = BinarySensorDeviceClass.UPDATE
-    _attr_entity_category = EntityCategory.DIAGNOSTIC
-
-    def __init__(self, coordinator: JellyFishCoordinator) -> None:
-        super().__init__(coordinator, "firmware_update")
-
-    @property
-    def is_on(self) -> bool:
-        return bool(self.coordinator.data.version.get("isUpdate"))

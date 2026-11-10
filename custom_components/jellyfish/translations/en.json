@@ -144,9 +144,6 @@
     "binary_sensor": {
       "connected": {
         "name": "Connected"
-      },
-      "firmware_update": {
-        "name": "Firmware update"
       }
     },
     "button": {
@@ -160,6 +157,11 @@
     "text": {
       "controller_name": {
         "name": "Controller name"
+      }
+    },
+    "update": {
+      "firmware_update": {
+        "name": "Firmware update"
       }
     }
   },
