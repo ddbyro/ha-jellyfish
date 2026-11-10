@@ -20,7 +20,9 @@ cloud and no external Python dependencies. Unofficial; not endorsed by JellyFish
 - Per zone: active pattern, activated by (app, schedule, network), port map in the board's
   LED1-LED4 terms (e.g. `LED3 0-79, LED1 0-56`), pixel count
 - Daily and calendar schedule sensors (events in attributes), saved pattern count
-- Diagnostics download with the full controller snapshot (location redacted)
+- Diagnostics download with the full controller snapshot (location and host redacted)
+- Device triggers on the controller device — "Controller restarted", "Controller
+  disconnected", "Controller reconnected" — usable directly in the automation UI
 
 **Services**
 

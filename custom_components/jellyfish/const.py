@@ -82,6 +82,7 @@ ATTR_CONFIRM = "confirm"
 ATTR_INDEX = "index"
 
 EVENT_CONNECTION = f"{DOMAIN}_connection"
+EVENT_RESTART = f"{DOMAIN}_restart"
 
 
 def build_pattern(

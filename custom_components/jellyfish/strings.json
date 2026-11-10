@@ -1,4 +1,11 @@
 {
+  "device_automation": {
+    "trigger_type": {
+      "restarted": "Controller restarted",
+      "disconnected": "Controller disconnected",
+      "reconnected": "Controller reconnected"
+    }
+  },
   "config": {
     "flow_title": "{name}",
     "step": {

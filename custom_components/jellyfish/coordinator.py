@@ -14,7 +14,13 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .backup import ZoneConfigBackup
 from .client import JellyFishClient, JellyFishError, parse_pattern_data
-from .const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL, DOMAIN, EVENT_CONNECTION
+from .const import (
+    CONF_POLL_INTERVAL,
+    DEFAULT_POLL_INTERVAL,
+    DOMAIN,
+    EVENT_CONNECTION,
+    EVENT_RESTART,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -213,5 +219,9 @@ class JellyFishCoordinator(DataUpdateCoordinator[JellyFishData]):
             self.health.last_restart = _utcnow()
             _LOGGER.warning(
                 "JellyFish controller %s appears to have restarted", self.client.host
+            )
+            self.hass.bus.async_fire(
+                EVENT_RESTART,
+                {"host": self.client.host, "entry_id": self.config_entry.entry_id},
             )
             self.async_update_listeners()
