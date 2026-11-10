@@ -125,7 +125,10 @@ views:
               action: perform-action
               perform_action: light.turn_off
               target:
-                entity_id: light.home_all_zones
+                # light.<zone> turns off that one zone. If you have more than
+                # one zone, the integration also adds an aggregate
+                # light.<controller>_all_zones you can target instead.
+                entity_id: light.zone
 
       # --- Controller health ----------------------------------------------
       - type: grid
