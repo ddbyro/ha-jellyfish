@@ -11,5 +11,6 @@
   "issue_tracker": "https://github.com/ddbyro/ha-jellyfish/issues",
   "loggers": ["custom_components.jellyfish"],
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "zeroconf": ["_jellyfishV2._tcp.local."]
 }

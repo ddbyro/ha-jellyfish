@@ -51,8 +51,10 @@ broadcasts every change to all connected clients.
 and restart.
 
 Then go to **Settings → Devices & services → Add integration → JellyFish Lighting (Local)** and
-enter the controller IP. Controllers are also auto-discovered by their DHCP hostname
-(`JellyFish-XXXX`). Give the controller a static DHCP lease.
+enter the controller IP. Controllers are also auto-discovered — by their DHCP hostname
+(`JellyFish-XXXX`) when they get a new lease, and via mDNS/zeroconf (the controller
+advertises itself as `_jellyfishV2._tcp.local.`) otherwise. Give the controller a
+static DHCP lease.
 
 ## Examples
 

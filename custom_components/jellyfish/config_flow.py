@@ -1,4 +1,4 @@
-"""Config flow: manual entry, DHCP discovery, reconfigure, options."""
+"""Config flow: manual entry, DHCP/zeroconf discovery, reconfigure, options."""
 
 from __future__ import annotations
 
@@ -20,6 +20,11 @@ try:  # moved in 2025.x
     from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 except ImportError:  # pragma: no cover
     from homeassistant.components.dhcp import DhcpServiceInfo
+
+try:  # moved in 2025.x
+    from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
+except ImportError:  # pragma: no cover
+    from homeassistant.components.zeroconf import ZeroconfServiceInfo
 
 from .client import DEFAULT_PORT, JellyFishClient, JellyFishError
 from .const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL, DOMAIN
@@ -79,13 +84,22 @@ class JellyFishConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
-        host = discovery_info.ip
+        return await self._async_step_discovered(discovery_info.ip)
+
+    async def async_step_zeroconf(
+        self, discovery_info: ZeroconfServiceInfo
+    ) -> ConfigFlowResult:
+        # The advertised port (80) isn't the control port; _probe always uses
+        # DEFAULT_PORT (9000), same as the DHCP path.
+        return await self._async_step_discovered(discovery_info.host)
+
+    async def _async_step_discovered(self, host: str) -> ConfigFlowResult:
         try:
             info = await _probe(self.hass, host, DEFAULT_PORT)
         except JellyFishError:
             return self.async_abort(reason="cannot_connect")
         await self.async_set_unique_id(_unique_id(info["hostname"]))
-        # Keeps the entry's IP current when DHCP hands out a new address.
+        # Keeps the entry's IP current when DHCP/zeroconf see a new address.
         self._abort_if_unique_id_configured(updates={CONF_HOST: host})
         self._host, self._name = host, info["name"] or info["hostname"]
         self.context["title_placeholders"] = {"name": self._name}

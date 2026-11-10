@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
+from ipaddress import ip_address
+
+import pytest
+
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
 from custom_components.jellyfish.const import DOMAIN
 
@@ -47,3 +53,57 @@ async def test_duplicate_aborts(hass: HomeAssistant, entry, fake: FakeController
     )
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "already_configured"
+
+
+async def test_dhcp_flow(
+    hass: HomeAssistant, fake: FakeController, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # _probe always connects on DEFAULT_PORT, not whatever random port the
+    # fake controller bound to for this test run.
+    monkeypatch.setattr("custom_components.jellyfish.config_flow.DEFAULT_PORT", fake.port)
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_DHCP},
+        data=DhcpServiceInfo(
+            ip="127.0.0.1", hostname="jellyfish-a1b2", macaddress="aabbccddeeff"
+        ),
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "discovery_confirm"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["title"] == "Home"
+    assert result["result"].unique_id == "jellyfish-a1b2"
+    assert result["result"].data[CONF_HOST] == "127.0.0.1"
+    await hass.config_entries.async_unload(result["result"].entry_id)
+    await hass.async_block_till_done()
+
+
+async def test_zeroconf_flow(
+    hass: HomeAssistant, fake: FakeController, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("custom_components.jellyfish.config_flow.DEFAULT_PORT", fake.port)
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_ZEROCONF},
+        data=ZeroconfServiceInfo(
+            ip_address=ip_address("127.0.0.1"),
+            ip_addresses=[ip_address("127.0.0.1")],
+            port=80,  # the advertised port; the real control port is DEFAULT_PORT
+            hostname="jellyfish-a1b2.local.",
+            type="_jellyfishV2._tcp.local.",
+            name="Home._jellyfishV2._tcp.local.",
+            properties={"JellyFish": None},
+        ),
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "discovery_confirm"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["title"] == "Home"
+    assert result["result"].unique_id == "jellyfish-a1b2"
+    assert result["result"].data[CONF_HOST] == "127.0.0.1"
+    await hass.config_entries.async_unload(result["result"].entry_id)
+    await hass.async_block_till_done()
