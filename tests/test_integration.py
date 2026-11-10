@@ -213,6 +213,62 @@ async def test_zone_config_requires_confirm(hass: HomeAssistant, entry, fake) ->
     assert sent["portMap"][0]["ctlrName"] == "JellyFish-A1B2.local"
 
 
+async def test_zone_config_backup_and_restore(hass: HomeAssistant, entry, fake) -> None:
+    eid = entry.entry_id
+
+    # No backups yet: restoring is refused.
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "restore_zone_config", {"config_entry_id": eid, "confirm": True},
+            blocking=True,
+        )
+
+    new_zones = {"Zone": {"portMap": [{"phyPort": 4, "phyStartIdx": 0, "phyEndIdx": 10}]}}
+    await hass.services.async_call(
+        DOMAIN, "set_zone_config", {"config_entry_id": eid, "zones": new_zones, "confirm": True},
+        blocking=True,
+    )
+    await _settle(hass)
+
+    # The pre-change config (port 3) was backed up before the write.
+    resp = await hass.services.async_call(
+        DOMAIN, "get_zone_config_backups", {"config_entry_id": eid},
+        blocking=True, return_response=True,
+    )
+    assert len(resp["backups"]) == 1
+    assert resp["backups"][0]["zones"]["Zone"]["portMap"][0]["phyPort"] == 3
+
+    # Restoring requires confirm too.
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "restore_zone_config", {"config_entry_id": eid, "confirm": False},
+            blocking=True,
+        )
+    assert (await _sets(hass, fake, "zones"))[-1]["zones"]["Zone"]["portMap"][0]["phyPort"] == 4
+
+    await hass.services.async_call(
+        DOMAIN, "restore_zone_config", {"config_entry_id": eid, "confirm": True},
+        blocking=True,
+    )
+    sent = (await _sets(hass, fake, "zones"))[-1]["zones"]["Zone"]
+    assert sent["portMap"][0]["phyPort"] == 3  # back to the original mapping
+
+    # Restoring backed up what it just replaced (port 4), on top of the original (port 3).
+    resp = await hass.services.async_call(
+        DOMAIN, "get_zone_config_backups", {"config_entry_id": eid},
+        blocking=True, return_response=True,
+    )
+    assert len(resp["backups"]) == 2
+    assert resp["backups"][0]["zones"]["Zone"]["portMap"][0]["phyPort"] == 4
+    assert resp["backups"][1]["zones"]["Zone"]["portMap"][0]["phyPort"] == 3
+
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "restore_zone_config", {"config_entry_id": eid, "index": 99, "confirm": True},
+            blocking=True,
+        )
+
+
 async def test_restart_detection(hass: HomeAssistant, entry, fake) -> None:
     fake.reboot()
     await fake.drop_all()

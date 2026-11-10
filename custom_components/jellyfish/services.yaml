@@ -317,6 +317,31 @@ set_zone_config:
       default: false
       selector:
         boolean: null
+get_zone_config_backups:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+restore_zone_config:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: jellyfish
+    index:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 4
+    confirm:
+      required: true
+      default: false
+      selector:
+        boolean: null
 refresh:
   fields:
     config_entry_id:

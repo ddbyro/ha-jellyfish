@@ -28,6 +28,7 @@ from .const import (
     ATTR_EFFECT_VALUE,
     ATTR_EVENTS,
     ATTR_FROM_ZONE,
+    ATTR_INDEX,
     ATTR_KIND,
     ATTR_NUM_OF_LEDS,
     ATTR_PATTERN,
@@ -48,7 +49,9 @@ from .const import (
     SERVICE_GET_PATTERN,
     SERVICE_GET_SCHEDULE,
     SERVICE_GET_ZONE_CONFIG,
+    SERVICE_GET_ZONE_CONFIG_BACKUPS,
     SERVICE_REFRESH,
+    SERVICE_RESTORE_ZONE_CONFIG,
     SERVICE_SAVE_PATTERN,
     SERVICE_SET_SCHEDULE,
     SERVICE_SET_ZONE_CONFIG,
@@ -151,6 +154,11 @@ SCHEMAS = {
     SERVICE_GET_ZONE_CONFIG: vol.Schema(_ENTRY),
     SERVICE_SET_ZONE_CONFIG: vol.Schema(
         {**_ENTRY, vol.Required(ATTR_ZONES): {cv.string: _ZONE},
+         vol.Required(ATTR_CONFIRM): cv.boolean}
+    ),
+    SERVICE_GET_ZONE_CONFIG_BACKUPS: vol.Schema(_ENTRY),
+    SERVICE_RESTORE_ZONE_CONFIG: vol.Schema(
+        {**_ENTRY, vol.Optional(ATTR_INDEX, default=0): vol.All(vol.Coerce(int), vol.Range(min=0)),
          vol.Required(ATTR_CONFIRM): cv.boolean}
     ),
     SERVICE_REFRESH: vol.Schema(_ENTRY),
@@ -262,7 +270,29 @@ def async_setup_services(hass: HomeAssistant) -> None:
                 )
                 rgb_start += count
             zones[name] = {"numPixels": zone.get("numPixels", rgb_start), "portMap": port_map}
+        # Snapshot what's live right now, before it's gone — this is the
+        # single most destructive write this integration can make.
+        await coord.zone_backup.snapshot(coord.data.zones)
         await _guard(coord.client.set_zones(zones))
+
+    async def get_zone_config_backups(call: ServiceCall) -> ServiceResponse:
+        coord = _coordinator(hass, call)
+        return {"backups": await coord.zone_backup.history()}
+
+    async def restore_zone_config(call: ServiceCall) -> None:
+        coord = _coordinator(hass, call)
+        if not call.data[ATTR_CONFIRM]:
+            raise ServiceValidationError(
+                "Set confirm: true. Restoring zone config changes port mapping and "
+                "turns all lights off, same as set_zone_config."
+            )
+        index = call.data[ATTR_INDEX]
+        backup = await coord.zone_backup.at(index)
+        if backup is None:
+            raise ServiceValidationError(f"No zone config backup at index {index}")
+        # The current (about-to-be-overwritten) config becomes undoable too.
+        await coord.zone_backup.snapshot(coord.data.zones)
+        await _guard(coord.client.set_zones(backup["zones"]))
 
     async def refresh(call: ServiceCall) -> None:
         await _coordinator(hass, call).async_request_refresh()
@@ -275,6 +305,8 @@ def async_setup_services(hass: HomeAssistant) -> None:
         SERVICE_SET_SCHEDULE: (set_schedule, SupportsResponse.NONE),
         SERVICE_GET_ZONE_CONFIG: (get_zone_config, SupportsResponse.ONLY),
         SERVICE_SET_ZONE_CONFIG: (set_zone_config, SupportsResponse.NONE),
+        SERVICE_GET_ZONE_CONFIG_BACKUPS: (get_zone_config_backups, SupportsResponse.ONLY),
+        SERVICE_RESTORE_ZONE_CONFIG: (restore_zone_config, SupportsResponse.NONE),
         SERVICE_REFRESH: (refresh, SupportsResponse.NONE),
     }
     for name, (handler, response) in handlers.items():

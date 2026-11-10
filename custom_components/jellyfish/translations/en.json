@@ -411,6 +411,34 @@
         }
       }
     },
+    "get_zone_config_backups": {
+      "name": "Get zone config backups",
+      "description": "Return the backup history saved automatically before each zone config write, newest first.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        }
+      }
+    },
+    "restore_zone_config": {
+      "name": "Restore zone config",
+      "description": "Write back a backed-up zone config. Turns lights off, same as set_zone_config. The config being replaced is itself backed up first.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Controller",
+          "description": "The JellyFish controller."
+        },
+        "index": {
+          "name": "Backup",
+          "description": "Which backup to restore: 0 is the most recent."
+        },
+        "confirm": {
+          "name": "Confirm",
+          "description": "Must be true."
+        }
+      }
+    },
     "refresh": {
       "name": "Refresh",
       "description": "Re-read everything from the controller.",

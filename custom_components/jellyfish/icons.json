@@ -96,6 +96,12 @@
     "set_zone_config": {
       "service": "mdi:ethernet-cable"
     },
+    "get_zone_config_backups": {
+      "service": "mdi:history"
+    },
+    "restore_zone_config": {
+      "service": "mdi:backup-restore"
+    },
     "refresh": {
       "service": "mdi:refresh"
     }

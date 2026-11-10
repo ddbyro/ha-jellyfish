@@ -12,6 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from .backup import ZoneConfigBackup
 from .client import JellyFishClient, JellyFishError, parse_pattern_data
 from .const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL, DOMAIN, EVENT_CONNECTION
 
@@ -83,6 +84,7 @@ class JellyFishCoordinator(DataUpdateCoordinator[JellyFishData]):
         )
         self.client = client
         self.health = Health()
+        self.zone_backup = ZoneConfigBackup(hass, entry.entry_id)
         self._unsubs = [
             client.add_message_listener(self._on_message),
             client.add_connection_listener(self._on_connection),

@@ -57,6 +57,8 @@ SERVICE_GET_SCHEDULE = "get_schedule"
 SERVICE_SET_SCHEDULE = "set_schedule"
 SERVICE_GET_ZONE_CONFIG = "get_zone_config"
 SERVICE_SET_ZONE_CONFIG = "set_zone_config"
+SERVICE_GET_ZONE_CONFIG_BACKUPS = "get_zone_config_backups"
+SERVICE_RESTORE_ZONE_CONFIG = "restore_zone_config"
 SERVICE_REFRESH = "refresh"
 
 ATTR_CONFIG_ENTRY = "config_entry_id"
@@ -77,6 +79,7 @@ ATTR_KIND = "kind"
 ATTR_EVENTS = "events"
 ATTR_ZONES = "zones"
 ATTR_CONFIRM = "confirm"
+ATTR_INDEX = "index"
 
 EVENT_CONNECTION = f"{DOMAIN}_connection"
 

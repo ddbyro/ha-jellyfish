@@ -32,6 +32,8 @@ cloud and no external Python dependencies. Unofficial; not endorsed by JellyFish
 | `jellyfish.get_pattern` | Return a pattern's settings (response data) |
 | `jellyfish.get_schedule` / `set_schedule` | Read or replace daily/calendar schedules |
 | `jellyfish.get_zone_config` / `set_zone_config` | Read or replace zone port mapping (`confirm: true` required) |
+| `jellyfish.get_zone_config_backups` | List the last 5 zone configs, auto-saved before each `set_zone_config` / `restore_zone_config` write |
+| `jellyfish.restore_zone_config` | Write back a backup (`index: 0` = most recent; `confirm: true` required) |
 | `jellyfish.refresh` | Re-read everything |
 
 Changes made from the JellyFish app show up in HA right away, because the controller
