@@ -226,5 +226,6 @@ async def test_restart_detection(hass: HomeAssistant, entry, fake) -> None:
 async def test_diagnostics_redacts(hass: HomeAssistant, entry) -> None:
     diag = await async_get_config_entry_diagnostics(hass, entry)
     assert diag["controller"]["time_config"]["lat"] == "**REDACTED**"
+    assert diag["entry"]["host"] == "**REDACTED**"
     assert diag["connection"]["connected"] is True
     assert "Zone" in diag["controller"]["zones"]

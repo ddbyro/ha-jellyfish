@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 
 from . import JellyFishConfigEntry
 
-TO_REDACT = {"lat", "lon"}
+TO_REDACT = {"host", "lat", "lon"}
 
 
 async def async_get_config_entry_diagnostics(
@@ -22,7 +22,7 @@ async def async_get_config_entry_diagnostics(
     snapshot = asdict(data) if data else {}
     if snapshot:
         snapshot["read_only_patterns"] = sorted(snapshot["read_only_patterns"])
-    return {
+    diagnostics = {
         "entry": {"host": client.host, "port": client.port, "options": dict(entry.options)},
         "connection": {
             "connected": client.connected,
@@ -37,5 +37,9 @@ async def async_get_config_entry_diagnostics(
             k: (v.isoformat() if hasattr(v, "isoformat") else v)
             for k, v in asdict(coordinator.health).items()
         },
-        "controller": async_redact_data(snapshot, TO_REDACT),
+        "controller": snapshot,
     }
+    # Redact the whole payload, not just "controller" — the host/IP under
+    # "entry" is just as identifying as the lat/lon under "controller", and
+    # diagnostics downloads are routinely attached to public GitHub issues.
+    return async_redact_data(diagnostics, TO_REDACT)
