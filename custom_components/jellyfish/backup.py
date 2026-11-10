@@ -26,11 +26,17 @@ class ZoneConfigBackupEntry(TypedDict):
 
 
 class ZoneConfigBackup:
-    """A per-config-entry rolling history of zone configs, newest first."""
+    """A rolling history of zone configs for one controller, newest first.
 
-    def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
+    Keyed by the config entry's unique_id (the controller's slugified hostname,
+    stable across reconfigures), not entry_id — removing and re-adding the
+    integration gets a new entry_id but the same unique_id, and the backup
+    history should survive that.
+    """
+
+    def __init__(self, hass: HomeAssistant, unique_id: str) -> None:
         self._store: Store[list[ZoneConfigBackupEntry]] = Store(
-            hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}_{entry_id}"
+            hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}_{unique_id}"
         )
 
     async def snapshot(self, zones: dict[str, Any]) -> None:

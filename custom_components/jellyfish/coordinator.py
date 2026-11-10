@@ -90,7 +90,7 @@ class JellyFishCoordinator(DataUpdateCoordinator[JellyFishData]):
         )
         self.client = client
         self.health = Health()
-        self.zone_backup = ZoneConfigBackup(hass, entry.entry_id)
+        self.zone_backup = ZoneConfigBackup(hass, entry.unique_id or entry.entry_id)
         self._unsubs = [
             client.add_message_listener(self._on_message),
             client.add_connection_listener(self._on_connection),
