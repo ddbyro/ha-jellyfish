@@ -31,6 +31,10 @@ DEFAULT_TIMEOUT = 10.0
 HEARTBEAT_INTERVAL = 30.0
 RECONNECT_MIN = 2.0
 RECONNECT_MAX = 60.0
+# Real replies (pattern data, zone config, schedules) are small JSON; this just
+# stops a compromised/spoofed device on the LAN from claiming an enormous
+# frame length and making us buffer it into memory.
+MAX_MSG_SIZE = 4 * 1024 * 1024
 
 MessageCallback = Callable[[dict[str, Any]], None]
 ConnectionCallback = Callable[[bool], None]
@@ -157,7 +161,7 @@ class JellyFishClient:
         try:
             async with asyncio.timeout(self.timeout):
                 self._ws = await self._session.ws_connect(
-                    self.url, autoping=True, max_msg_size=0
+                    self.url, autoping=True, max_msg_size=MAX_MSG_SIZE
                 )
         except (aiohttp.ClientError, OSError, TimeoutError) as err:
             raise JellyFishConnectionError(f"Cannot connect to {self.url}: {err}") from err

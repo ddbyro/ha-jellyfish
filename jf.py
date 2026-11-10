@@ -4,6 +4,8 @@ Usage: ./jf.py '<json>' [host]   e.g. ./jf.py '{"cmd":"toCtlrGet","get":[["zones
 """
 import base64, json, os, socket, struct, sys
 
+MAX_MSG_SIZE = 4 * 1024 * 1024  # refuse to buffer a frame claiming to be bigger than this
+
 def ws_send(host, msg, port=9000, timeout=5):
     s = socket.create_connection((host, port), timeout=timeout)
     key = base64.b64encode(os.urandom(16)).decode()
@@ -31,6 +33,8 @@ def ws_send(host, msg, port=9000, timeout=5):
         b0, b1 = need(2); ln = b1 & 0x7F
         if ln == 126: ln = struct.unpack(">H", need(2))[0]
         elif ln == 127: ln = struct.unpack(">Q", need(8))[0]
+        if ln > MAX_MSG_SIZE:
+            raise ValueError(f"frame too large ({ln} bytes), refusing to read it")
         payload = need(ln); op = b0 & 0x0F
         if op in (0x1, 0x0): msg_parts.append(payload)
         if op == 0x8: break
