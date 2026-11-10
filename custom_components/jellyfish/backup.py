@@ -14,6 +14,7 @@ from typing import Any, TypedDict
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
+from homeassistant.util import slugify
 
 STORAGE_VERSION = 1
 STORAGE_KEY_PREFIX = "jellyfish_zone_backup"
@@ -28,15 +29,23 @@ class ZoneConfigBackupEntry(TypedDict):
 class ZoneConfigBackup:
     """A rolling history of zone configs for one controller, newest first.
 
-    Keyed by the config entry's unique_id (the controller's slugified hostname,
-    stable across reconfigures), not entry_id — removing and re-adding the
-    integration gets a new entry_id but the same unique_id, and the backup
-    history should survive that.
+    Keyed by the config entry's unique_id (derived from the controller's
+    self-reported hostname, stable across reconfigures), not entry_id —
+    removing and re-adding the integration gets a new entry_id but the same
+    unique_id, and the backup history should survive that.
+
+    unique_id is only lowercased and has ".local" stripped (see config_flow's
+    `_unique_id`), not actually restricted to a safe character set — the
+    controller is a device on the LAN, not something we fully trust the
+    content of. Slugify it again here before using it as a Store key, since
+    `Store.path` is a bare `os.path.join(config_dir, ".storage", key)` with no
+    sanitization of its own: an unslugified key could otherwise escape
+    `.storage/` entirely.
     """
 
     def __init__(self, hass: HomeAssistant, unique_id: str) -> None:
         self._store: Store[list[ZoneConfigBackupEntry]] = Store(
-            hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}_{unique_id}"
+            hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}_{slugify(unique_id)}"
         )
 
     async def snapshot(self, zones: dict[str, Any]) -> None:
