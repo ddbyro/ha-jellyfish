@@ -11,6 +11,9 @@ cloud and no external Python dependencies. Unofficial; not endorsed by JellyFish
 - Select: pattern, direction, effect (Twinkle/Lightning), pattern type, effect between pixels
 - Number: speed, pattern brightness, effect value, space between pixels, skip, LEDs per block
 - Text: controller name (as shown in the app)
+- Scene: one per saved pattern per zone, so each pattern gets a native scene card instead
+  of only showing up in the pattern select. New patterns (saved from HA or the app) get a
+  scene automatically; a deleted pattern's scene goes unavailable rather than disappearing.
 
 **Diagnostics & health**
 - Connected (binary sensor), firmware version, update entity (the controller only

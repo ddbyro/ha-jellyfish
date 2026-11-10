@@ -20,6 +20,7 @@ PLATFORMS = [
     Platform.BUTTON,
     Platform.LIGHT,
     Platform.NUMBER,
+    Platform.SCENE,
     Platform.SELECT,
     Platform.SENSOR,
     Platform.TEXT,
